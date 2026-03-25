@@ -1,0 +1,67 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "no.synth.homey.livingconnectz",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Danfoss Living Connect Z"
+  },
+  "description": {
+    "en": "Control Danfoss Living Connect Z radiator thermostats"
+  },
+  "category": [
+    "climate"
+  ],
+  "brandColor": "#E2000F",
+  "author": {
+    "name": "Henrik"
+  },
+  "license": "MPL-2.0",
+  "drivers": [
+    {
+      "name": {
+        "en": "Living Connect Z"
+      },
+      "class": "thermostat",
+      "capabilities": [
+        "target_temperature",
+        "measure_battery"
+      ],
+      "capabilitiesOptions": {
+        "target_temperature": {
+          "min": 4,
+          "max": 28,
+          "step": 0.5
+        }
+      },
+      "energy": {
+        "batteries": [
+          "AA",
+          "AA"
+        ]
+      },
+      "zwave": {
+        "manufacturerId": 2,
+        "productTypeId": 5,
+        "productId": [
+          3,
+          4
+        ],
+        "learnmode": {
+          "instruction": {
+            "en": "Press the middle button on your Danfoss Living Connect Z to wake it up and start pairing."
+          }
+        },
+        "associationGroups": [
+          1
+        ],
+        "wakeUpInterval": 300
+      },
+      "id": "living-connect-z"
+    }
+  ]
+}

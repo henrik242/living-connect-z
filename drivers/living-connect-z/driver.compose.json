@@ -1,0 +1,32 @@
+{
+  "name": {
+    "en": "Living Connect Z"
+  },
+  "class": "thermostat",
+  "capabilities": [
+    "target_temperature",
+    "measure_battery"
+  ],
+  "capabilitiesOptions": {
+    "target_temperature": {
+      "min": 4,
+      "max": 28,
+      "step": 0.5
+    }
+  },
+  "energy": {
+    "batteries": ["AA", "AA"]
+  },
+  "zwave": {
+    "manufacturerId": 2,
+    "productTypeId": 5,
+    "productId": [3, 4],
+    "learnmode": {
+      "instruction": {
+        "en": "Press the middle button on your Danfoss Living Connect Z to wake it up and start pairing."
+      }
+    },
+    "associationGroups": [1],
+    "wakeUpInterval": 300
+  }
+}
