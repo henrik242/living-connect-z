@@ -28,17 +28,16 @@ class DanfossLivingConnectZDevice extends ZwaveDevice {
   }
 
   _pollForCommandClasses() {
+    const registered = { setpoint: false, battery: false, wakeup: false };
+
     const interval = this.homey.setInterval(() => {
       const setpointCC = this.node.CommandClass.COMMAND_CLASS_THERMOSTAT_SETPOINT;
       const batteryCC = this.node.CommandClass.COMMAND_CLASS_BATTERY;
       const wakeupCC = this.node.CommandClass.COMMAND_CLASS_WAKE_UP;
 
-      if (!setpointCC && !batteryCC && !wakeupCC) return;
-
-      this.homey.clearInterval(interval);
-      this.log('Command classes available — registering listeners');
-
-      if (setpointCC) {
+      if (setpointCC && !registered.setpoint) {
+        registered.setpoint = true;
+        this.log('Registering setpoint listener');
         setpointCC.on('report', (command, report) => {
           if (command.name !== 'THERMOSTAT_SETPOINT_REPORT') return;
           if (!report || !report.Level2 || !report['Value (Raw)']) return;
@@ -53,7 +52,9 @@ class DanfossLivingConnectZDevice extends ZwaveDevice {
         });
       }
 
-      if (batteryCC) {
+      if (batteryCC && !registered.battery) {
+        registered.battery = true;
+        this.log('Registering battery listener');
         batteryCC.on('report', (command, report) => {
           if (command.name !== 'BATTERY_REPORT') return;
           if (!report || report['Battery Level'] == null) return;
@@ -64,20 +65,29 @@ class DanfossLivingConnectZDevice extends ZwaveDevice {
         });
       }
 
-      if (wakeupCC) {
+      if (wakeupCC && !registered.wakeup) {
+        registered.wakeup = true;
+        this.log('Registering wakeup listener');
         wakeupCC.on('report', (command) => {
           if (command.name !== 'WAKE_UP_NOTIFICATION') return;
           this.log('Device woke up — requesting status');
 
-          if (batteryCC) {
-            batteryCC.BATTERY_GET().catch((err) => this.log('Battery get:', err.message));
+          const bCC = this.node.CommandClass.COMMAND_CLASS_BATTERY;
+          const sCC = this.node.CommandClass.COMMAND_CLASS_THERMOSTAT_SETPOINT;
+          if (bCC) {
+            bCC.BATTERY_GET().catch((err) => this.log('Battery get:', err.message));
           }
-          if (setpointCC) {
-            setpointCC.THERMOSTAT_SETPOINT_GET({
+          if (sCC) {
+            sCC.THERMOSTAT_SETPOINT_GET({
               Level: { 'Setpoint Type': 'Heating 1' },
             }).catch((err) => this.log('Setpoint get:', err.message));
           }
         });
+      }
+
+      if (registered.setpoint && registered.battery && registered.wakeup) {
+        this.homey.clearInterval(interval);
+        this.log('All command class listeners registered');
       }
     }, 5000);
   }
