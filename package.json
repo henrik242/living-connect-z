@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "app.js",
   "license": "MPL-2.0",
-  "scripts": {},
+  "scripts": {
+    "version": "bash scripts/version.sh",
+    "preinstall": "bash scripts/version.sh"
+  },
   "dependencies": {
     "homey-zwavedriver": "^2.2.3"
   }
